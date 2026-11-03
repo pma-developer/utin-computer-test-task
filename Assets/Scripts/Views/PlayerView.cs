@@ -9,6 +9,24 @@ namespace Views
         [Header("Jump Settings")]
         [SerializeField] private float _jumpHeight = 0.5f;
         [SerializeField] private float _jumpLength = 1.0f;
+        
+        [Header("Size Settings")]
+        [SerializeField] private float _minScale = 0.2f;
+        [SerializeField] private float _initialScale = 1f;
+
+        private Vector3 _baseScale;
+
+        private void Awake()
+        {
+            _baseScale = transform.localScale;
+        }
+
+        public void Shrink(float amount)
+        {
+            Vector3 newScale = transform.localScale - Vector3.one * amount;
+            newScale = Vector3.Max(newScale, Vector3.one * _minScale);
+            transform.localScale = newScale;
+        }
 
         public Sequence PlayMoveAnimation(Vector3 targetPosition, float duration = 1f)
         {
