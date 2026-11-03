@@ -28,7 +28,8 @@ namespace Views
             {
                 return DOTween.Sequence().Append(transform.DOMove(targetPosition, 0));
             }
-
+            
+            Vector3 startScale = transform.localScale;
             int numJumps = Mathf.Max(1, Mathf.RoundToInt(distance / _jumpLength));
             transform.DOKill();
 
@@ -40,7 +41,7 @@ namespace Views
             );
 
             sequence.Join(
-                transform.DOScaleY(1.25f, duration / (numJumps * 2))
+                transform.DOScaleY(startScale.y * 1.25f, duration / (numJumps * 2))
                     .SetLoops(numJumps * 2, LoopType.Yoyo)
                     .SetEase(Ease.InOutSine)
             );

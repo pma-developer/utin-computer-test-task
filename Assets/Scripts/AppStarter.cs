@@ -28,6 +28,8 @@ public class AppStarter : MonoBehaviour
         _inputController.ShootStarted += _levelController.OnShootPressed;
         _inputController.ShootCanceled += _levelController.OnShootReleased;
         
+        _levelController.LevelFinished += PlayFinishAnimation;
+        _levelController.LevelFailed += OnLevelFailed;
     }
 
 
@@ -48,12 +50,19 @@ public class AppStarter : MonoBehaviour
     {
         _playerView.PlayMoveAnimation(_playerEndJumpTarget.position, _gameConfig.EndJumpDuration)
             .OnUpdate(CheckDoorDistance)
-            .OnComplete(_winTextView.Show);
+            .OnComplete(() => _winTextView.Show());
+    }
+
+    private void OnLevelFailed()
+    {
+        _lossTextView.Show();
     }
 
     private void OnDestroy()
     {
         _inputController.ShootStarted -= _levelController.OnShootPressed;
         _inputController.ShootCanceled -= _levelController.OnShootReleased;
+        _levelController.LevelFinished -= PlayFinishAnimation;
+        _levelController.LevelFailed -= OnLevelFailed;
     }
 }

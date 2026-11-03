@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 2953283714670392279}
   - component: {fileID: 62613678608937868}
   - component: {fileID: 6843881063256246482}
-  m_Layer: 0
+  - component: {fileID: 8419495828981857091}
+  m_Layer: 8
   m_Name: Obstacle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 6d3e76ef4113c8a42ad069aac53ee42b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -114,3 +115,18 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8419495828981857091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5877201962352002007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c2cd6269f0a04e44917ec46f8ba5e7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Views.ObstacleView
+  _shrinkDuration: 1
+  _normalMaterial: {fileID: 2100000, guid: 6d3e76ef4113c8a42ad069aac53ee42b, type: 2}
+  _infectedMaterial: {fileID: 2100000, guid: 3b8832e882137934b97f6f8b91f74982, type: 2}

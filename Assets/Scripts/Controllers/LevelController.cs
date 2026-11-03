@@ -14,6 +14,7 @@ namespace Controllers
         [SerializeField] private PlayerView _playerView;
         [SerializeField] private Transform _shotSphereSpawnPoint;
         [SerializeField] private Transform _target;
+        [SerializeField] private PathChecker _pathChecker;
 
         
         private bool _isGrowing = false;
@@ -30,6 +31,9 @@ namespace Controllers
             _explosionView.ExplosionCollided += OnExplosionCollided;
             ResetShot();
             _explosionView.gameObject.SetActive(false);
+            
+            _currentPlayerSize = _gameConfig.PlayerInitialScale;
+            _playerView.SetSize(_currentPlayerSize);
         }
 
         private void OnDestroy()
@@ -52,6 +56,13 @@ namespace Controllers
             if (!_isGrowing) return;
             
             _isGrowing = false;
+            
+            if (_currentPlayerSize <= _gameConfig.PlayerMinScale)
+            {
+                LevelFailed?.Invoke();
+                return;
+            }
+            
             Vector3 direction = (_target.position - _shotSphereView.transform.position).normalized;
             _shotSphereView.StartFiring(direction);
         }
@@ -97,7 +108,18 @@ namespace Controllers
 
         private void OnExplosionCollided(ObstacleView obstacle)
         {
+            if (!obstacle.gameObject.activeSelf) return;
+            
             obstacle.SetInfected(true);
+            CheckPathClear();
+        }
+
+        private void CheckPathClear()
+        {
+            if (_pathChecker.IsPathClear(_playerView.transform.position, _target.position, _currentPlayerSize))
+            {
+                LevelFinished?.Invoke();
+            }
         }
     }
 }

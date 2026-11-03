@@ -10,20 +10,22 @@ namespace Views
         [SerializeField] private float _duration = 0.5f;
         private MeshRenderer _renderer;
         private Material _materialInstance;
+        private Color _initialColor;
         public event Action<ObstacleView> ExplosionCollided; 
 
         private void Awake()
         {
             _renderer = GetComponent<MeshRenderer>();
             
-            _materialInstance = _renderer.material; 
+            _materialInstance = _renderer.material;
+            _initialColor = _materialInstance.color;
         }
 
         public Sequence PlayExplosion(float maxScale)
         {
             transform.localScale = Vector3.one;
-            Color startColor = _materialInstance.color;
-            Color endColor = startColor;
+            _materialInstance.color = _initialColor;
+            Color endColor = _initialColor;
             endColor.a = 0f;
 
             Sequence sequence = DOTween.Sequence();

@@ -19,5 +19,6 @@ namespace ScriptableObjects
         [SerializeField] public float PlayerMinScale = 0.2f;
         [SerializeField] public float PlayerInitialScale = 1f;
         [SerializeField] public float ShotExplosionRadiusMultiplier = 2f;
+        [SerializeField] public float PlayerSizeReservePercent = 0.2f;
     }
 }
