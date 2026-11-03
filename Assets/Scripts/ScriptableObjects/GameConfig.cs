@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace ScriptableObjects
 {
@@ -17,6 +18,6 @@ namespace ScriptableObjects
         [SerializeField] public float PlayerShrinkRate = 0.3f;
         [SerializeField] public float PlayerMinScale = 0.2f;
         [SerializeField] public float PlayerInitialScale = 1f;
-        [SerializeField] public float InfectionRadiusMultiplier = 2f;
+        [SerializeField] public float ShotExplosionRadiusMultiplier = 2f;
     }
 }

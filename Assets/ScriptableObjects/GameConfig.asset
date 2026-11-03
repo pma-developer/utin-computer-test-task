@@ -15,3 +15,10 @@ MonoBehaviour:
   EndJumpDuration: 5
   DoorOpenDistance: 5
   DoorOpenDuration: 0.7
+  ShotGrowthRate: 0.5
+  ShotMaxSize: 2
+  ShotMinSize: 0.3
+  PlayerShrinkRate: 0.3
+  PlayerMinScale: 0.2
+  PlayerInitialScale: 1
+  ShotExplosionRadiusMultiplier: 3

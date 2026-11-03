@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Views
@@ -9,7 +10,7 @@ namespace Views
         private Vector3 _fireDirection;
         private float _fireSpeed = 10f;
 
-        public event System.Action<Vector3> ShotCollided;
+        public event Action ShotCollided;
 
         private void Awake()
         {
@@ -46,11 +47,14 @@ namespace Views
             }
         }
 
-        private void OnCollisionEnter(Collision collision)
+        private void OnTriggerEnter(Collider collider)
         {
             if (!_isFiring) return;
 
-            ShotCollided?.Invoke(collision.contacts[0].point);
+            if (collider.gameObject.TryGetComponent(out ObstacleView _))
+            {
+                ShotCollided?.Invoke();
+            }
         }
     }
 }

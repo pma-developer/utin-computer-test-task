@@ -14,18 +14,10 @@ namespace Views
         [SerializeField] private float _minScale = 0.2f;
         [SerializeField] private float _initialScale = 1f;
 
-        private Vector3 _baseScale;
-
-        private void Awake()
+        
+        public void SetSize(float size)
         {
-            _baseScale = transform.localScale;
-        }
-
-        public void Shrink(float amount)
-        {
-            Vector3 newScale = transform.localScale - Vector3.one * amount;
-            newScale = Vector3.Max(newScale, Vector3.one * _minScale);
-            transform.localScale = newScale;
+            transform.localScale = Vector3.one * size;
         }
 
         public Sequence PlayMoveAnimation(Vector3 targetPosition, float duration = 1f)

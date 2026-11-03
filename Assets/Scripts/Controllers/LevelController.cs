@@ -1,3 +1,5 @@
+using System;
+using DG.Tweening;
 using UnityEngine;
 using Views;
 using ScriptableObjects;
@@ -6,36 +8,96 @@ namespace Controllers
 {
     public class LevelController : MonoBehaviour
     {
-        [SerializeField] private ShotController _shotController;
         [SerializeField] private GameConfig _gameConfig;
+        [SerializeField] private ShotSphereView _shotSphereView;
+        [SerializeField] private ExplosionView _explosionView;
+        [SerializeField] private PlayerView _playerView;
+        [SerializeField] private Transform _shotSphereSpawnPoint;
+        [SerializeField] private Transform _target;
+
         
-        private ObstacleView[] _obstacles;
+        private bool _isGrowing = false;
+        private float _currentShotSize = 0f;
+        private float _currentPlayerSize = 1f;
+
+        public event Action LevelFinished;
+        public event Action LevelFailed;
+
 
         private void Start()
         {
-            _obstacles = FindObjectsOfType<ObstacleView>();
-            _shotController.ShotCollided += OnShotCollided;
+            _shotSphereView.ShotCollided += OnShotCollided;
+            _explosionView.ExplosionCollided += OnExplosionCollided;
+            ResetShot();
+            _explosionView.gameObject.SetActive(false);
         }
 
         private void OnDestroy()
         {
-            _shotController.ShotCollided -= OnShotCollided;
+            _shotSphereView.ShotCollided -= OnShotCollided;
+            _explosionView.ExplosionCollided -= OnExplosionCollided;
         }
 
-        private void OnShotCollided(Vector3 collisionPoint)
+        public void OnShootPressed()
         {
-            float infectionRadius = _shotController.CurrentSize * _gameConfig.InfectionRadiusMultiplier;
+            if (_currentShotSize >= _gameConfig.ShotMaxSize) return;
             
-            foreach (ObstacleView obstacle in _obstacles)
+            _isGrowing = true;
+            _currentShotSize = _gameConfig.ShotMinSize;
+            _shotSphereView.SetSize(_currentShotSize);
+        }
+
+        public void OnShootReleased()
+        {
+            if (!_isGrowing) return;
+            
+            _isGrowing = false;
+            Vector3 direction = (_target.position - _shotSphereView.transform.position).normalized;
+            _shotSphereView.StartFiring(direction);
+        }
+
+        private void Update()
+        {
+            if (_isGrowing)
             {
-                if (obstacle == null) continue;
-                
-                float distance = Vector3.Distance(collisionPoint, obstacle.transform.position);
-                if (distance <= infectionRadius)
+                _currentShotSize += _gameConfig.ShotGrowthRate * Time.deltaTime;
+                _currentShotSize = Mathf.Min(_currentShotSize, _gameConfig.ShotMaxSize);
+                _shotSphereView.SetSize(_currentShotSize);
+
+                _currentPlayerSize -= _gameConfig.PlayerShrinkRate * Time.deltaTime;
+                _playerView.SetSize(_currentPlayerSize);
+                if (_currentPlayerSize <= _gameConfig.PlayerMinScale)
                 {
-                    obstacle.Infect();
+                    LevelFailed?.Invoke();
                 }
             }
+        }
+
+        private void ResetShot()
+        {
+            _shotSphereView.SetSize(0f);
+            _currentShotSize = 0f;
+            _shotSphereView.SetPosition(_shotSphereSpawnPoint.position);
+        }
+        
+        private void OnShotCollided()
+        {
+            float infectionRadius = _currentShotSize * _gameConfig.ShotExplosionRadiusMultiplier;
+            
+            _explosionView.gameObject.SetActive(true);
+            _explosionView.transform.position = _shotSphereView.transform.position;
+            ResetShot();
+            _shotSphereView.StopFiring();
+            
+            _explosionView.PlayExplosion(infectionRadius).OnComplete(() => {
+                Debug.Log($"ExplosionFinished");
+                _explosionView.gameObject.SetActive(false);
+            });
+        }
+
+        private void OnExplosionCollided(ObstacleView obstacle)
+        {
+            obstacle.SetInfected(true);
         }
     }
 }

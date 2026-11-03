@@ -11,7 +11,7 @@ public class AppStarter : MonoBehaviour
 {
     [SerializeField] private PlayerView _playerView;
     [SerializeField] private DoorsView _doorsView;
-    [SerializeField] private ShotController _shotController;
+    [SerializeField] private LevelController _levelController;
     [SerializeField] private InputController _inputController;
     [SerializeField] private GameConfig _gameConfig;
     [SerializeField] private AnimatedTextView _winTextView;
@@ -25,18 +25,11 @@ public class AppStarter : MonoBehaviour
         Application.targetFrameRate = 60;
         DOTween.Init();
         
-        SetupInput();
+        _inputController.ShootStarted += _levelController.OnShootPressed;
+        _inputController.ShootCanceled += _levelController.OnShootReleased;
         
-        _playerView.PlayMoveAnimation(_playerEndJumpTarget.position, _gameConfig.EndJumpDuration)
-            .OnUpdate(CheckDoorDistance)
-            .OnComplete(WinTheGame);
     }
 
-    private void SetupInput()
-    {
-        _inputController.ShootStarted += _shotController.StartGrowing;
-        _inputController.ShootCanceled += _shotController.StopGrowing;
-    }
 
     private void CheckDoorDistance()
     {
@@ -51,15 +44,16 @@ public class AppStarter : MonoBehaviour
             _doorsView.PlayOpenAnimation(_gameConfig.DoorOpenDuration);
         }
     }
-    void WinTheGame()
+    private void PlayFinishAnimation()
     {
-        Debug.Log("Game Won");
-        _winTextView.Show();
+        _playerView.PlayMoveAnimation(_playerEndJumpTarget.position, _gameConfig.EndJumpDuration)
+            .OnUpdate(CheckDoorDistance)
+            .OnComplete(_winTextView.Show);
     }
 
     private void OnDestroy()
     {
-        _inputController.ShootStarted -= _shotController.StartGrowing;
-        _inputController.ShootCanceled -= _shotController.StopGrowing;
+        _inputController.ShootStarted -= _levelController.OnShootPressed;
+        _inputController.ShootCanceled -= _levelController.OnShootReleased;
     }
 }

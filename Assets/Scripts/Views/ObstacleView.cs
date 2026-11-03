@@ -1,36 +1,47 @@
 using UnityEngine;
+using DG.Tweening;
+using UnityEngine.Serialization; // Required for DoTween
 
 namespace Views
 {
     public class ObstacleView : MonoBehaviour
     {
-        [SerializeField] private float _infectionRadius = 2f;
-        [SerializeField] private float _explosionDelay = 0.5f;
+        [SerializeField] private float _shrinkDuration = 0.5f;
+        
+        [SerializeField] private Material _normalMaterial;
+        [SerializeField] private Material _infectedMaterial;
+        
+        private Renderer _renderer; 
+        private Collider _collider; 
 
         private bool _isInfected = false;
+        private Vector3 _originalScale;
 
-        public float InfectionRadius => _infectionRadius;
-        public bool IsInfected => _isInfected;
-
-        public void Infect()
+        private void Awake()
         {
-            if (_isInfected) return;
-            
-            _isInfected = true;
-            
-            Invoke(nameof(Explode), _explosionDelay);
+            _originalScale = transform.localScale;
+            _renderer = GetComponent<Renderer>();
+            _collider = GetComponent<Collider>();
         }
 
-        private void Explode()
+        public void SetInfected(bool infected)
         {
-            // TODO: Add explosion effect
-            Destroy(gameObject);
-        }
+            _isInfected = infected;
+            transform.DOKill(); 
+            _collider.enabled = !infected;
 
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, _infectionRadius);
+            if (_isInfected)
+            {
+                _renderer.material = _infectedMaterial;
+                transform.DOScale(0f, _shrinkDuration).SetEase(Ease.InBack)
+                         .OnComplete(() => gameObject.SetActive(false));
+            }
+            else
+            {
+                gameObject.SetActive(true);
+                transform.localScale = _originalScale;
+                _renderer.material = _normalMaterial;
+            }
         }
     }
 }

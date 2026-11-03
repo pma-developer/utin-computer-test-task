@@ -475,7 +475,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AppStarter
   _playerView: {fileID: 577806061}
   _doorsView: {fileID: 251182165}
-  _shotController: {fileID: 369592690}
+  _levelController: {fileID: 369592690}
   _inputController: {fileID: 369592689}
   _gameConfig: {fileID: 11400000, guid: 91c7f99111ba7c740a5f0311c8163958, type: 2}
   _winTextView: {fileID: 1303323231}
@@ -503,13 +503,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 369592686}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e18eeddd19c310243a39b35cb7ff8bfd, type: 3}
+  m_Script: {fileID: 11500000, guid: 430122a44d391744a9468c6401577c59, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Controllers.ShotController
-  _shotSphereView: {fileID: 427282933}
-  _playerView: {fileID: 577806061}
-  _target: {fileID: 1400690380}
+  m_EditorClassIdentifier: Assembly-CSharp::Controllers.LevelController
   _gameConfig: {fileID: 11400000, guid: 91c7f99111ba7c740a5f0311c8163958, type: 2}
+  _shotSphereView: {fileID: 427282933}
+  _explosionView: {fileID: 452064510}
+  _playerView: {fileID: 577806061}
+  _shotSphereSpawnPoint: {fileID: 456376916}
+  _target: {fileID: 1400690380}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -646,11 +648,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 427282932}
+  - component: {fileID: 427282933}
   - component: {fileID: 427282931}
   - component: {fileID: 427282930}
   - component: {fileID: 427282929}
-  - component: {fileID: 427282933}
-  m_Layer: 0
+  - component: {fileID: 427282934}
+  m_Layer: 6
   m_Name: ShotSphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -672,7 +675,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -762,6 +765,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28063964556f21e47aa8e0ed5bac8dd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Views.ShotSphereView
+--- !u!54 &427282934
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 427282928}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 0
+  m_ImplicitTensor: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &452064505
 GameObject:
   m_ObjectHideFlags: 0
@@ -771,16 +801,18 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 452064509}
+  - component: {fileID: 452064510}
   - component: {fileID: 452064508}
   - component: {fileID: 452064507}
   - component: {fileID: 452064506}
-  m_Layer: 0
+  - component: {fileID: 452064511}
+  m_Layer: 7
   m_Name: ExplosionSphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!135 &452064506
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -796,7 +828,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -867,12 +899,83 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 452064505}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.18, y: -1.12, z: 4.14}
-  m_LocalScale: {x: 3.4, y: 3.4, z: 3.4}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.16, y: -0.8, z: -8.52}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &452064510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 452064505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d41021e30fd4abb9aa260ce8a913027, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Views.ExplosionView
+  _duration: 0.5
+--- !u!54 &452064511
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 452064505}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 0
+  m_ImplicitTensor: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!1 &456376915
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 456376916}
+  m_Layer: 0
+  m_Name: ShotSphereSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &456376916
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 456376915}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.867}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 577806060}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &510426985
 GameObject:
@@ -1063,7 +1166,8 @@ Transform:
   m_LocalPosition: {x: -1.57, y: -0.75, z: -9.66}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 456376916}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -29.14, z: 0}
 --- !u!114 &577806061
@@ -1420,8 +1524,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c2cd6269f0a04e44917ec46f8ba5e7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Views.ObstacleView
-  _infectionRadius: 2
-  _explosionDelay: 0.5
+  _shrinkDuration: 1
+  _normalMaterial: {fileID: 2100000, guid: 6d3e76ef4113c8a42ad069aac53ee42b, type: 2}
+  _infectedMaterial: {fileID: 2100000, guid: 3b8832e882137934b97f6f8b91f74982, type: 2}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2704,6 +2809,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Obstacle
       objectReference: {fileID: 0}
+    - target: {fileID: 5877201962352002007, guid: 3a3d136eccb134c4d9cc3911995384b2, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6843881063256246482, guid: 3a3d136eccb134c4d9cc3911995384b2, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6843881063256246482, guid: 3a3d136eccb134c4d9cc3911995384b2, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6843881063256246482, guid: 3a3d136eccb134c4d9cc3911995384b2, type: 3}
+      propertyPath: m_IncludeLayers.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2724,8 +2845,8 @@ SceneRoots:
   - {fileID: 7119622054304369533}
   - {fileID: 2060165624}
   - {fileID: 577806060}
+  - {fileID: 452064509}
   - {fileID: 427282932}
   - {fileID: 613896048}
   - {fileID: 651292938}
   - {fileID: 510426988}
-  - {fileID: 452064509}
