@@ -11,7 +11,7 @@ public class AppStarter : MonoBehaviour
 {
     [SerializeField] private PlayerView _playerView;
     [SerializeField] private DoorsView _doorsView;
-    [SerializeField] private ShotSphereView _shotSphereView;
+    [SerializeField] private ShotController _shotController;
     [SerializeField] private InputController _inputController;
     [SerializeField] private GameConfig _gameConfig;
     [SerializeField] private AnimatedTextView _winTextView;
@@ -34,16 +34,8 @@ public class AppStarter : MonoBehaviour
 
     private void SetupInput()
     {
-        _inputController.ShootStarted += _shotSphereView.StartGrowing;
-        _inputController.ShootCanceled += _shotSphereView.StopGrowing;
-    }
-
-    private void Update()
-    {
-        if (_shotSphereView.IsGrowing)
-        {
-            _playerView.Shrink(_gameConfig.PlayerShrinkRate * Time.deltaTime);
-        }
+        _inputController.ShootStarted += _shotController.StartGrowing;
+        _inputController.ShootCanceled += _shotController.StopGrowing;
     }
 
     private void CheckDoorDistance()
@@ -67,7 +59,7 @@ public class AppStarter : MonoBehaviour
 
     private void OnDestroy()
     {
-        _inputController.ShootStarted -= _shotSphereView.StartGrowing;
-        _inputController.ShootCanceled -= _shotSphereView.StopGrowing;
+        _inputController.ShootStarted -= _shotController.StartGrowing;
+        _inputController.ShootCanceled -= _shotController.StopGrowing;
     }
 }

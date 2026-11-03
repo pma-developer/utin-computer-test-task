@@ -1,18 +1,15 @@
 using UnityEngine;
-using ScriptableObjects;
 
 namespace Views
 {
     public class ShotSphereView : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private GameConfig _gameConfig;
-        
-        private bool _isGrowing = false;
-        private float _currentSize = 0f;
         private Vector3 _initialScale;
+        private bool _isFiring = false;
+        private Vector3 _fireDirection;
+        private float _fireSpeed = 10f;
 
-        public bool IsGrowing => _isGrowing;
+        public event System.Action<Vector3> ShotCollided;
 
         private void Awake()
         {
@@ -20,39 +17,40 @@ namespace Views
             transform.localScale = Vector3.zero;
         }
 
-        public void StartGrowing()
+        public void SetSize(float size)
         {
-            if (_currentSize >= _gameConfig.ShotMaxSize) return;
-            
-            _isGrowing = true;
-            _currentSize = _gameConfig.ShotMinSize;
-            transform.localScale = _initialScale * _currentSize;
+            transform.localScale = _initialScale * size;
         }
 
-        public void StopGrowing()
+        public void SetPosition(Vector3 position)
         {
-            if (!_isGrowing) return;
-            
-            _isGrowing = false;
-            FireShot();
+            transform.position = position;
+        }
+
+        public void StartFiring(Vector3 direction)
+        {
+            _isFiring = true;
+            _fireDirection = direction.normalized;
+        }
+
+        public void StopFiring()
+        {
+            _isFiring = false;
         }
 
         private void Update()
         {
-            if (!_isGrowing) return;
-            
-            _currentSize += _gameConfig.ShotGrowthRate * Time.deltaTime;
-            _currentSize = Mathf.Min(_currentSize, _gameConfig.ShotMaxSize);
-            
-            transform.localScale = _initialScale * _currentSize;
+            if (_isFiring)
+            {
+                transform.position += _fireDirection * _fireSpeed * Time.deltaTime;
+            }
         }
 
-        private void FireShot()
+        private void OnCollisionEnter(Collision collision)
         {
-            // TODO: Implement shot firing logic
-            // For now, just reset the sphere
-            transform.localScale = Vector3.zero;
-            _currentSize = 0f;
+            if (!_isFiring) return;
+
+            ShotCollided?.Invoke(collision.contacts[0].point);
         }
     }
 }
