@@ -25,8 +25,9 @@ namespace Controllers
                 _obstacleLayer);
         }
         
-        public RaycastHit[] GetObstaclesAlongPath(Vector3 start, Vector3 end, float playerRadius)
+        public RaycastHit[] GetObstaclesAlongPath(Vector3 start, Vector3 end, float playerSize)
         {
+            float playerRadius = playerSize / 2;
             Vector3 offset = end - start;
             return Physics.SphereCastAll(start, playerRadius, offset.normalized, offset.magnitude, _obstacleLayer);
         }

@@ -18,6 +18,7 @@ namespace Controllers
         [SerializeField] private ObstacleView _obstaclePrefab;
         [SerializeField] private Transform _spawnAreaMin;
         [SerializeField] private Transform _spawnAreaMax;
+        [SerializeField] private Transform _obstaclesSpawnArea;
 
         
         private bool _isGrowing = false;
@@ -56,11 +57,12 @@ namespace Controllers
         {
             for (int i = 0; i < _gameConfig.ObstacleCount; i++)
             {
-                float randomX = UnityEngine.Random.Range(_spawnAreaMin.position.x, _spawnAreaMax.position.x);
-                float randomZ = UnityEngine.Random.Range(_spawnAreaMin.position.z, _spawnAreaMax.position.z);
-                Vector3 spawnPosition = new Vector3(randomX, _obstaclePrefab.transform.localPosition.y, randomZ);
+                float randomX = UnityEngine.Random.Range(_spawnAreaMin.localPosition.x, _spawnAreaMax.localPosition.x);
+                float randomZ = UnityEngine.Random.Range(_spawnAreaMin.localPosition.z, _spawnAreaMax.localPosition.z);
+                Vector3 localSpawnPosition = new Vector3(randomX, _obstaclePrefab.transform.localPosition.y, randomZ);
+                Vector3 worldSpawnPosition = _obstaclesSpawnArea.TransformPoint(localSpawnPosition);
                 
-                Instantiate(_obstaclePrefab, spawnPosition, Quaternion.identity);
+                Instantiate(_obstaclePrefab, worldSpawnPosition, Quaternion.identity, _obstaclesSpawnArea);
             }
         }
 
