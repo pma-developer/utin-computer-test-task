@@ -25,5 +25,7 @@ namespace ScriptableObjects
 
         [Header("Obstacle Generation")] [SerializeField]
         public int ObstacleCount = 10;
+
+        public float MinShotSizeCost => (ShotMinSize / ShotGrowthRate) * PlayerShrinkRate;
     }
 }

@@ -3,6 +3,7 @@ using DG.Tweening;
 using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Views;
 using Controllers;
 
@@ -17,6 +18,7 @@ public class AppStarter : MonoBehaviour
     [SerializeField] private AnimatedTextView _winTextView;
     [SerializeField] private AnimatedTextView _lossTextView;
     [SerializeField] private Transform _playerEndJumpTarget;
+    [SerializeField] private Button _restartButton;
     
     private bool _hasTriggeredDoors = false;
     
@@ -30,6 +32,9 @@ public class AppStarter : MonoBehaviour
         
         _levelController.LevelWon += PlayFinishAnimation;
         _levelController.LevelFailed += OnLevelFailed;
+        
+        _restartButton.onClick.AddListener(RestartLevel);
+        _restartButton.gameObject.SetActive(false);
     }
 
 
@@ -50,12 +55,26 @@ public class AppStarter : MonoBehaviour
     {
         _playerView.PlayMoveAnimation(_playerEndJumpTarget.position, _gameConfig.EndJumpDuration)
             .OnUpdate(CheckDoorDistance)
-            .OnComplete(() => _winTextView.Show());
+            .OnComplete(() => {
+                _winTextView.Show();
+                _restartButton.gameObject.SetActive(true);
+            });
     }
 
     private void OnLevelFailed()
     {
         _lossTextView.Show();
+        _restartButton.gameObject.SetActive(true);
+    }
+
+    private void RestartLevel()
+    {
+        _winTextView.Hide();
+        _lossTextView.Hide();
+        _hasTriggeredDoors = false;
+        _restartButton.gameObject.SetActive(false);
+        _doorsView.ResetDoors();
+        _levelController.RestartLevel();
     }
 
     private void OnDestroy()
@@ -64,5 +83,6 @@ public class AppStarter : MonoBehaviour
         _inputController.ShootCanceled -= _levelController.OnShootReleased;
         _levelController.LevelWon -= PlayFinishAnimation;
         _levelController.LevelFailed -= OnLevelFailed;
+        _restartButton.onClick.RemoveListener(RestartLevel);
     }
 }

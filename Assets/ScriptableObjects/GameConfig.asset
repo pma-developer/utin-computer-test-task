@@ -20,5 +20,6 @@ MonoBehaviour:
   ShotMinSize: 0.3
   PlayerShrinkRate: 0.3
   PlayerMinScale: 0.2
-  PlayerInitialScale: 1
+  PlayerRequiredSizeMultiplier: 1.2
   ShotExplosionRadiusMultiplier: 3
+  ObstacleCount: 30

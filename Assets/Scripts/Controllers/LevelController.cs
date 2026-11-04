@@ -19,6 +19,7 @@ namespace Controllers
         [SerializeField] private Transform _spawnAreaMin;
         [SerializeField] private Transform _spawnAreaMax;
         [SerializeField] private Transform _obstaclesSpawnArea;
+        [SerializeField] private Transform _playerSpawnPosition;
 
         
         private bool _isGrowing = false;
@@ -38,13 +39,14 @@ namespace Controllers
             _shotSphereView.ShotCollided += OnShotCollidedWithObstacle;
             _shotSphereView.CollidedWithShotReset += OnShotCollidedWithResetTrigger;
             _explosionView.ExplosionCollided += OnExplosionCollided;
+            
+            _playerView.transform.position = _playerSpawnPosition.position;
             ResetShot();
             _explosionView.gameObject.SetActive(false);
             
             float calculatedInitialSize = CalculateRequiredPlayerSize();
             Debug.Log($"Calculated initial size: {calculatedInitialSize}");
-            _currentPlayerSize = calculatedInitialSize;
-            _playerView.SetSize(_currentPlayerSize);
+            SetPlayerSize(calculatedInitialSize);
         }
 
         private void OnDestroy()
@@ -67,15 +69,32 @@ namespace Controllers
             }
         }
 
+        private void SetPlayerSize(float size)
+        {
+            _currentPlayerSize = size;
+            _playerView.SetSize(_currentPlayerSize);
+            if (_currentPlayerSize <= _gameConfig.PlayerMinScale)
+            {
+                _isLevelFinished = true;
+                LevelFailed?.Invoke();
+            }
+        }
+
+        private void SetShotSize(float size)
+        {
+            _currentShotSize = size;
+            _shotSphereView.SetSize(_currentShotSize);
+        }
+
         public void OnShootPressed()
         {
             if (_isLevelFinished) return;
             if (_isShotFiring) return;
-            if (_currentShotSize >= _gameConfig.ShotMaxSize) return;
+            
+            SetPlayerSize(_currentPlayerSize - _gameConfig.MinShotSizeCost);
             
             _isGrowing = true;
-            _currentShotSize = _gameConfig.ShotMinSize;
-            _shotSphereView.SetSize(_currentShotSize);
+            SetShotSize(_gameConfig.ShotMinSize);
         }
 
         public void OnShootReleased()
@@ -93,24 +112,14 @@ namespace Controllers
         {
             if (_isGrowing && !_isLevelFinished)
             {
-                _currentShotSize += _gameConfig.ShotGrowthRate * Time.deltaTime;
-                _currentShotSize = Mathf.Min(_currentShotSize, _gameConfig.ShotMaxSize);
-                _shotSphereView.SetSize(_currentShotSize);
-
-                _currentPlayerSize -= _gameConfig.PlayerShrinkRate * Time.deltaTime;
-                _playerView.SetSize(_currentPlayerSize);
-                if (_currentPlayerSize <= _gameConfig.PlayerMinScale)
-                {
-                    _isLevelFinished = true;
-                    LevelFailed?.Invoke();
-                }
+                SetShotSize(_currentShotSize + _gameConfig.ShotGrowthRate * Time.deltaTime);
+                SetPlayerSize(_currentPlayerSize - _gameConfig.PlayerShrinkRate * Time.deltaTime);
             }
         }
 
         private void ResetShot()
         {
-            _shotSphereView.SetSize(0f);
-            _currentShotSize = 0f;
+            SetShotSize(0f);
             _shotSphereView.SetPosition(_shotSphereSpawnPoint.position);
             _shotSphereView.StopFiring();
             _isShotFiring = false;
@@ -158,14 +167,42 @@ namespace Controllers
             
             RaycastHit[] allObstacles = _pathChecker.GetObstaclesAlongPath(playerStartPos, targetPos, 1f);
             
-            float sizePerObstacle =  _gameConfig.PlayerShrinkRate * _gameConfig.ShotMinSize / _gameConfig.ShotGrowthRate;
-            float totalSizeConsumed = allObstacles.Length * sizePerObstacle;
+            float totalSizeConsumed = allObstacles.Length * _gameConfig.MinShotSizeCost;
             
             float minRequiredSize = totalSizeConsumed + _gameConfig.PlayerMinScale;
             
             float initialSize = minRequiredSize * _gameConfig.PlayerRequiredSizeMultiplier;
 
             return initialSize;
+        }
+
+        public void RestartLevel()
+        {
+            DestroyAllObstacles();
+            GenerateObstacles();
+            
+            _playerView.transform.position = _playerSpawnPosition.position;
+            _explosionView.gameObject.SetActive(false);
+            
+            float calculatedInitialSize = CalculateRequiredPlayerSize();
+            SetPlayerSize(calculatedInitialSize);
+            ResetShot();
+            
+            _isLevelFinished = false;
+            _isGrowing = false;
+            _isShotFiring = false;
+        }
+
+        private void DestroyAllObstacles()
+        {
+            for (int i = _obstaclesSpawnArea.childCount - 1; i >= 0; i--)
+            {
+                Transform child = _obstaclesSpawnArea.GetChild(i);
+                if (child.GetComponent<ObstacleView>() != null)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
         }
     }
 }
