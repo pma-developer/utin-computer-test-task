@@ -23,6 +23,7 @@ namespace Controllers
         
         private bool _isGrowing = false;
         private bool _isLevelFinished = false;
+        private bool _isShotFiring = false;
         private float _currentShotSize = 0f;
         private float _currentPlayerSize = 1f;
 
@@ -69,6 +70,7 @@ namespace Controllers
         public void OnShootPressed()
         {
             if (_isLevelFinished) return;
+            if (_isShotFiring) return;
             if (_currentShotSize >= _gameConfig.ShotMaxSize) return;
             
             _isGrowing = true;
@@ -81,6 +83,7 @@ namespace Controllers
             if (_isLevelFinished) return;
             if (!_isGrowing) return;
             _isGrowing = false;
+            _isShotFiring = true;
             
             Vector3 direction = (_target.position - _shotSphereView.transform.position).normalized;
             _shotSphereView.StartFiring(direction);
@@ -110,6 +113,7 @@ namespace Controllers
             _currentShotSize = 0f;
             _shotSphereView.SetPosition(_shotSphereSpawnPoint.position);
             _shotSphereView.StopFiring();
+            _isShotFiring = false;
         }
 
 
