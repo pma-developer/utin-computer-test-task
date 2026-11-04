@@ -5,19 +5,16 @@ namespace Views
 {
     public class PlayerView : MonoBehaviour
     {
-        
-        [Header("Jump Settings")]
+        [SerializeField] private Transform _pathwayToEnd;
+        [Header("Animation Settings")]
         [SerializeField] private float _jumpHeight = 0.5f;
         [SerializeField] private float _jumpLength = 1.0f;
-        
-        [Header("Size Settings")]
-        [SerializeField] private float _minScale = 0.2f;
-        [SerializeField] private float _initialScale = 1f;
-
         
         public void SetSize(float size)
         {
             transform.localScale = Vector3.one * size;
+            Vector3 prev = _pathwayToEnd.localScale;
+            _pathwayToEnd.localScale = new Vector3(size, prev.y, prev.z);
         }
 
         public Sequence PlayMoveAnimation(Vector3 targetPosition, float duration = 1f)

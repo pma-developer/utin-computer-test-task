@@ -5,25 +5,30 @@ namespace Controllers
     public class PathChecker : MonoBehaviour
     {
         [SerializeField] private LayerMask _obstacleLayer;
-        [SerializeField] private int _raycastCount = 10;
-        
-        public bool IsPathClear(Vector3 start, Vector3 end, float playerRadius)
+
+        public bool IsPathClear(Vector3 start, Vector3 end, float playerSize)
         {
-            Vector3 direction = (end - start).normalized;
-            float distance = Vector3.Distance(start, end);
-            
-            for (int i = 0; i < _raycastCount; i++)
+            float playerRadius = playerSize / 2;
+            if (Physics.CheckSphere(start, playerRadius, _obstacleLayer))
             {
-                float t = (float)i / (_raycastCount - 1);
-                Vector3 point = Vector3.Lerp(start, end, t);
-                
-                if (Physics.CheckSphere(point, playerRadius, _obstacleLayer))
-                {
-                    return false;
-                }
+                Debug.Log("obstacle at the start");
+                return false;
             }
-            
-            return true;
+
+            Vector3 offset = end - start;
+            return !Physics.SphereCast(
+                start,
+                playerRadius,
+                offset.normalized,
+                out _,
+                offset.magnitude,
+                _obstacleLayer);
+        }
+        
+        public RaycastHit[] GetObstaclesAlongPath(Vector3 start, Vector3 end, float playerRadius)
+        {
+            Vector3 offset = end - start;
+            return Physics.SphereCastAll(start, playerRadius, offset.normalized, offset.magnitude, _obstacleLayer);
         }
     }
 }

@@ -14,7 +14,7 @@ TagManager:
   - Player
   - Explosion
   - Obstacle
-  - 
+  - ShotResetTrigger
   - 
   - 
   - 

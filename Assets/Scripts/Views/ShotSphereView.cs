@@ -5,12 +5,14 @@ namespace Views
 {
     public class ShotSphereView : MonoBehaviour
     {
+        [SerializeField] private LayerMask _shotResetLayer;
         private Vector3 _initialScale;
         private bool _isFiring = false;
         private Vector3 _fireDirection;
         private float _fireSpeed = 10f;
 
         public event Action ShotCollided;
+        public event Action CollidedWithShotReset;
 
         private void Awake()
         {
@@ -51,9 +53,14 @@ namespace Views
         {
             if (!_isFiring) return;
 
-            if (collider.gameObject.TryGetComponent(out ObstacleView _))
+            if (collider.TryGetComponent(out ObstacleView _))
             {
                 ShotCollided?.Invoke();
+            }
+
+            if (((int)_shotResetLayer & (1 << collider.gameObject.layer)) != 0)
+            {
+                CollidedWithShotReset?.Invoke();
             }
         }
     }

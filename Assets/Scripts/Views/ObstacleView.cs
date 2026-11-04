@@ -6,6 +6,7 @@ namespace Views
 {
     public class ObstacleView : MonoBehaviour
     {
+        [Header("Animation Settings")]
         [SerializeField] private float _shrinkDuration = 0.5f;
         
         [SerializeField] private Material _normalMaterial;

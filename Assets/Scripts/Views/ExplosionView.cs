@@ -21,9 +21,9 @@ namespace Views
             _initialColor = _materialInstance.color;
         }
 
-        public Sequence PlayExplosion(float maxScale)
+        public Sequence PlayExplosion(float initialScale, float maxScale)
         {
-            transform.localScale = Vector3.one;
+            transform.localScale = initialScale * Vector3.one;
             _materialInstance.color = _initialColor;
             Color endColor = _initialColor;
             endColor.a = 0f;

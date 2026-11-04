@@ -28,7 +28,7 @@ public class AppStarter : MonoBehaviour
         _inputController.ShootStarted += _levelController.OnShootPressed;
         _inputController.ShootCanceled += _levelController.OnShootReleased;
         
-        _levelController.LevelFinished += PlayFinishAnimation;
+        _levelController.LevelWon += PlayFinishAnimation;
         _levelController.LevelFailed += OnLevelFailed;
     }
 
@@ -62,7 +62,7 @@ public class AppStarter : MonoBehaviour
     {
         _inputController.ShootStarted -= _levelController.OnShootPressed;
         _inputController.ShootCanceled -= _levelController.OnShootReleased;
-        _levelController.LevelFinished -= PlayFinishAnimation;
+        _levelController.LevelWon -= PlayFinishAnimation;
         _levelController.LevelFailed -= OnLevelFailed;
     }
 }
