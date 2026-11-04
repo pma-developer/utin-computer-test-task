@@ -18,7 +18,7 @@ MonoBehaviour:
   ShotGrowthRate: 0.5
   ShotMaxSize: 2
   ShotMinSize: 0.3
-  PlayerShrinkRate: 0.3
+  PlayerShrinkRate: 0.18
   PlayerMinScale: 0.2
   PlayerRequiredSizeMultiplier: 1.2
   ShotExplosionRadiusMultiplier: 3
